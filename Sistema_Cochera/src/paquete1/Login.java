@@ -130,7 +130,7 @@ public class Login extends JDialog {
 			ps.setString(1, user);
 			ps.setString(2, pass);
 			rs=ps.executeQuery();
-			if(rs.next()) {
+			if(rs.next()) {				
 				acceso=true;
 				usuario.cambiarUsuario(rs.getString(1));
 				
@@ -151,6 +151,7 @@ public class Login extends JDialog {
 			}	
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, "Error base de datos", "ERROR", JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
 		}
 	}
 	/*

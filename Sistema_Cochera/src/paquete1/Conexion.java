@@ -5,9 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 public class Conexion {
 	Connection con;
-	String url="jdbc:mysql://localhost:3306/bdparqueadero?useSSL=false";
-	String user="root";
-	String password="junin054";
+	String url="jdbc:mysql://remotemysql.com:3306/Ig2LNXGmWt?useSSL=false";
+	String user="Ig2LNXGmWt";
+	String password="POn48Bs6Gq";
 	public Conexion() {		
 	}
 	

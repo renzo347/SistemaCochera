@@ -389,6 +389,7 @@ public class VentanaPrin extends JFrame {
 			stm.close();
 		} catch (SQLException e) {
 			lblAvisos.setText("ERROR AL GUARDAR");
+			e.printStackTrace();
 		} 
 		}	
 	}
