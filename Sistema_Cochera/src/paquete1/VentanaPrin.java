@@ -30,6 +30,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -58,12 +59,12 @@ public class VentanaPrin extends JFrame {
 	private JLabel lblTiempoCochera;
 	
 
-/*	
+
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					VentanaPrin frame = new VentanaPrin();
+					VentanaPrin frame = new VentanaPrin(new Usuario());
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -71,7 +72,7 @@ public class VentanaPrin extends JFrame {
 			}
 		});
 	}
-    */
+    
 	/**
 	 * Create the frame.
 	 */
@@ -333,8 +334,8 @@ public class VentanaPrin extends JFrame {
 		Conexion conexion=new Conexion();
 		Connection con=conexion.conexion();
 		String placa, propietario;
-		Date dateSalida=new Date(new java.util.Date().getTime());
-		Date dateEntrada=null;
+		java.util.Date dateSalida=new java.util.Date();
+		java.util.Date dateEntrada=null;
 		String sql="SELECT placa, propietario, horaentrada FROM vehiculos WHERE placa='"+textField_Patente1.getText()+"'";
 		try {
 			Statement stm=con.createStatement();
@@ -342,9 +343,7 @@ public class VentanaPrin extends JFrame {
 			if(rs.next()) {
 				lblPatente.setText(rs.getString(1));
 				lblNombre.setText(rs.getString(2));
-				dateEntrada=new Date(rs.getDate(3).getTime());
-				System.out.println(dateEntrada.getTime());
-				System.out.println(dateSalida.getTime());
+				dateEntrada=new Date(rs.getTimestamp(3).getTime());
 			}else {
 				lblPatente.setText("NO ENCONTRADO");
 			}			
@@ -354,7 +353,9 @@ public class VentanaPrin extends JFrame {
 		}
 		long minutos=dateSalida.getTime()-dateEntrada.getTime();
 		minutos=minutos/60000;
-		lblTiempoCochera.setText(Long.toString(minutos));
+		int horas=(int) (minutos/60);
+		int min=(int) (minutos%60);
+		lblTiempoCochera.setText("HORAS: "+horas+"  MINUTOS: "+min);
 }
 	protected void ingresar() {
 		// TODO Auto-generated method stub
