@@ -18,6 +18,8 @@ import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.LayoutManager;
+
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.GroupLayout;
@@ -39,9 +41,16 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
+
 
 public class VentanaPrin extends JFrame {
-
+	private JTable tabla;
 	private JPanel contentPane;
 	private Usuario usuario;
 	private JTextField textField_Patente;
@@ -57,9 +66,13 @@ public class VentanaPrin extends JFrame {
 	private JLabel lblPatente;
 	private JLabel lblNombre;
 	private JLabel lblTiempoCochera;
+	private JPanel AutosEnCochera;
+	private JTabbedPane tabbedPane;
+	private JScrollPane scrollPane;
+
 	
 
-
+/*
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -72,10 +85,8 @@ public class VentanaPrin extends JFrame {
 			}
 		});
 	}
-    
-	/**
-	 * Create the frame.
-	 */
+  */
+	
 	public VentanaPrin(Usuario user) {
 		Color color=UIManager.getColor("TabbedPane.selected");
 		setResizable(false);
@@ -149,7 +160,17 @@ public class VentanaPrin extends JFrame {
 		lblNewLabel_1.setBounds(10, 37, 114, 14);
 		panel_inferior.add(lblNewLabel_1);
 		
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {				
+				JTabbedPane pane=(JTabbedPane) e.getSource();
+				int sel=pane.getSelectedIndex();
+				if(sel==2) {
+					tabla=autosEnCochera();
+					scrollPane.setViewportView(tabla);
+				}			
+			}
+		});
 		tabbedPane.setBounds(0, 30, 648, 358);
 		contentPane.add(tabbedPane);
 		
@@ -311,14 +332,23 @@ public class VentanaPrin extends JFrame {
 		JLabel lblPagar = new JLabel("");
 		lblPagar.setFont(new Font("Tahoma", Font.BOLD, 17));
 		lblPagar.setBounds(218, 143, 129, 30);
-		panel_3.add(lblPagar);
-		JPanel panel_1 = new JPanel();
-		tabbedPane.addTab("Autos en cochera", null, panel_1, null);
-		panel_1.setBackground(color);
+		panel_3.add(lblPagar);		
+
+		AutosEnCochera = new JPanel();
+		AutosEnCochera.setLayout(new BorderLayout(0, 0));
+		tabla= autosEnCochera();
+		scrollPane = new JScrollPane(tabla);
+		AutosEnCochera.add(scrollPane, BorderLayout.CENTER);
+			
+		tabbedPane.addTab("Autos en cochera", null, AutosEnCochera, null);
+		AutosEnCochera.setBackground(color);
+		
 		JPanel panel_2 = new JPanel();
 		panel_2.setBackground(color);
 		tabbedPane.addTab("New tab", null, panel_2, null);
 		panel_2.setLayout(null);
+		
+		
 		
 		JCheckBox chckbxNewCheckBox_1 = new JCheckBox("New check box");
 		chckbxNewCheckBox_1.setPreferredSize(new Dimension(105, 66));
@@ -328,6 +358,39 @@ public class VentanaPrin extends JFrame {
 		JCheckBox chckbxNewCheckBox_2 = new JCheckBox("New check box");
 		chckbxNewCheckBox_2.setBounds(251, 104, 97, 23);
 		panel_2.add(chckbxNewCheckBox_2);
+	}
+
+	private JTable autosEnCochera() {
+		JTable tabla=new JTable();
+		String[] columnas= {"PATENTE","PROPIETARIO","TIPO","INGRESO","SALIDA","PAGO","ESTADO"};
+		DefaultTableModel tableModel=new DefaultTableModel(columnas,0);
+		String sql="SELECT * FROM vehiculos";
+		Conexion conection=new Conexion();
+		Connection con=conection.conexion();
+		try {
+			Statement stm=con.createStatement();
+			ResultSet rs=stm.executeQuery(sql);
+			while(rs.next()) {
+				String placa=rs.getString(1);
+				String propietario=rs.getString(2);
+				String tipo=rs.getString(3);
+				String entrada=rs.getString(4);
+				String salida=rs.getString(5);
+				String pago=rs.getString(6);
+				String estado=rs.getString(7);
+				
+				String[] data= {placa,propietario,tipo,entrada,salida,pago,estado};
+				tableModel.addRow(data);
+			}
+			
+		} catch (SQLException e) {			
+			e.printStackTrace();
+		}
+		
+		//tabla=new JTable(tableModel);
+
+		tabla.setModel(tableModel);
+		return tabla;
 	}
 
 	protected void buscar() {
@@ -348,8 +411,8 @@ public class VentanaPrin extends JFrame {
 				lblPatente.setText("NO ENCONTRADO");
 			}			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(this, "Error base de datos", "Error", JOptionPane.ERROR_MESSAGE);
+			//e.printStackTrace();
 		}
 		long minutos=dateSalida.getTime()-dateEntrada.getTime();
 		minutos=minutos/60000;
@@ -358,6 +421,7 @@ public class VentanaPrin extends JFrame {
 		lblTiempoCochera.setText("HORAS: "+horas+"  MINUTOS: "+min);
 }
 	protected void ingresar() {
+
 		// TODO Auto-generated method stub
 		Conexion conexion=new Conexion();
 		String tipo="";
@@ -392,6 +456,7 @@ public class VentanaPrin extends JFrame {
 			lblAvisos.setText("ERROR AL GUARDAR");
 			e.printStackTrace();
 		} 
-		}	
+		}		
 	}
-}
+	
+}	
