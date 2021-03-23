@@ -161,6 +161,7 @@ public class VentanaPrin extends JFrame {
 		panel_inferior.add(lblNewLabel_1);
 		
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		/*
 		tabbedPane.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {				
 				JTabbedPane pane=(JTabbedPane) e.getSource();
@@ -170,7 +171,7 @@ public class VentanaPrin extends JFrame {
 					scrollPane.setViewportView(tabla);
 				}			
 			}
-		});
+		});*/
 		tabbedPane.setBounds(0, 30, 648, 358);
 		contentPane.add(tabbedPane);
 		
@@ -206,6 +207,8 @@ public class VentanaPrin extends JFrame {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ingresar();
+				tabla=autosEnCochera();
+				scrollPane.setViewportView(tabla);
 			}
 		});
 		btnNewButton.setBounds(499, 288, 119, 31);
